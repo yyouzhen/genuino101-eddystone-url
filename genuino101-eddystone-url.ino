@@ -1,14 +1,22 @@
 #include <CurieBLE.h>
+BLEService eddystoneService = BLEService("FEAA");
+BLECharacteristic eddystoneCharacteristic("FEAA",BLEBroadcast,20);
 
 void setup() {
 
-  BLEService eddystoneService = BLEService("FEAA");
-  BLECharacteristic eddystoneCharacteristic("FEAA",BLERead|BLEBroadcast,20);
-
+  // Begin BLE
   BLE.begin();
+
+  // Set the UUID for the service this peripheral advertises
   BLE.setAdvertisedService(eddystoneService);
+
+  // Add the characteristic to the service
   eddystoneService.addCharacteristic(eddystoneCharacteristic);
+
+  // Add service
   BLE.addService(eddystoneService);
+
+  // Broadcast
   eddystoneCharacteristic.broadcast();
 
   // It was generated at https://www.mkompf.com/tech/eddystoneurl.html
@@ -16,7 +24,6 @@ void setup() {
   {
     0x10,  // Frame type: URL
     0xF8, // Power
-    /** Google Japan
     0x01, // https://www.
     'g',
     'o',
@@ -30,13 +37,12 @@ void setup() {
     '.',
     'j',
     'p',
-    **/
-    0x02, // http://
-    'x',
-    0x01, // .org/
   };
+
+  // Set advertising data
   eddystoneCharacteristic.writeValue(advdata,sizeof(advdata));
 
+  // Start advertising
   BLE.advertise();
 
 }
